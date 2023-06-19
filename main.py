@@ -129,7 +129,6 @@ while True:
             (lastNotify, _) = peekLog(NOTIFY_LOG)
             if (time.time() - lastNotify > NO_CHANGE_NOTIF_FREQUENCY_SECONDS):
                 notify(NotificationType.NO_CHANGE)
-        raise Exception("bruh")
     except Exception as e:
         notify(NotificationType.ERROR, err=str(traceback.format_exc()))
     finally:
