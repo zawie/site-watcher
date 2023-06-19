@@ -8,6 +8,7 @@ import re
 from enum import Enum
 import traceback
 
+from emailer import sendMessage
 
 class NotificationType(Enum):
     ERROR = 1
@@ -19,7 +20,7 @@ NOTIFY_LOG = 'notify.log'
 
 CHECKING_FREQUENCY_SECONDS = 5
 NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 15 #24*60*60 #Daily
-NO_CHANGE_RECIEVERS = ['adzawie@gmail.com']
+DEV_RECIEVERS = ['adzawie@gmail.com']
 CHANGE_RECIEVERS = ['adzawie@gmail.com', 'adamspeedz@gmail.com']
 
 URL = 'https://www.dwyerstorage.com/4863-nw-lake-road-camas-wa-98607'
@@ -80,8 +81,9 @@ def peekLog(fileName):
     
 def notify(notifType, err=None):
 
-    subject, body = None, None
+    subject, body, recievers = None, None, None
     if (notifType == NotificationType.CHANGE):
+        recievers = CHANGE_RECIEVERS
         subject = '😱🚨🔔 A change was detected on Dwyerstorage.com!'
         body = f"""Hello,
 
@@ -91,6 +93,7 @@ Check {URL} now!
 Best,
 Adam's Bot"""
     elif (notifType == NotificationType.NO_CHANGE): 
+        recievers = DEV_RECIEVERS
         subject = '✅ No changes detected on Dwyerstorage.com'
         body = f"""Hello,
 
@@ -100,11 +103,15 @@ The site being monitored is {URL}.
 Best,
 Adam's Bot"""
     elif (notifType == NotificationType.ERROR):
+        recievers = DEV_RECIEVERS
         subject = '❌ Dwyerstorage monitor encountered an error!'
         body = str(err)
     else:
         raise Exception("invalid notifType")
-    print(f"SUBJECT: {subject}\nBODY:\n{body}")
+    
+    print(f"Attempting {notifType.name} notification!")
+
+    sendMessage(recievers, subject=subject, body=body)
 
     log(NOTIFY_LOG, notifType.name)
 
