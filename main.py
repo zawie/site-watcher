@@ -1,0 +1,129 @@
+import bs4
+import requests
+import os
+import calendar
+import time
+import datetime
+import re
+from enum import Enum
+import traceback
+
+
+class NotificationType(Enum):
+    ERROR = 1
+    CHANGE = 2
+    NO_CHANGE = 3
+
+COUNT_LOG = 'count.log'
+NOTIFY_LOG = 'notify.log'
+
+CHECKING_FREQUENCY_SECONDS = 5
+NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 15 #24*60*60 #Daily
+NO_CHANGE_RECIEVERS = ['adzawie@gmail.com']
+CHANGE_RECIEVERS = ['adzawie@gmail.com', 'adamspeedz@gmail.com']
+
+URL = 'https://www.dwyerstorage.com/4863-nw-lake-road-camas-wa-98607'
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'
+}
+
+TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+
+def getButtons(url):
+    r=requests.get(url, headers=HEADERS)
+    soup = bs4.BeautifulSoup(r.content, 'html5lib')
+    return soup.find_all('button')
+
+def countButtonsContainingString(buttons, string):
+    count = 0
+
+    for b in buttons:
+        for child in b.children:
+            if (type(child) is bs4.element.NavigableString):
+                if (string in child.string):
+                    count += 1
+    return count
+
+def getLastCount():
+    (_, m) = peekLog(COUNT_LOG)
+    if m == '':
+        return 4
+    else:
+        return int(m)
+    
+def log(fileName, string):
+    time_stamp = datetime.datetime.fromtimestamp(time.time()).strftime(TIME_FORMAT)
+
+    f = open(fileName, "a")  # append mode
+    f.write(f'[{time_stamp}] {string}\n')
+    f.close()
+  
+def peekLog(fileName):
+    try: 
+        with open(fileName, 'rb') as f:
+            try:  # catch OSError in case of a one line file 
+                f.seek(-2, os.SEEK_END)
+                while f.read(1) != b'\n':
+                    f.seek(-2, os.SEEK_CUR)
+            except OSError:
+                f.seek(0)
+            last_line = f.readline().decode()
+            #remove timestamp
+            if (last_line == ""):
+                return (0, "")
+            timestamp_str = last_line[last_line.find("[")+1:last_line.find("]")]
+            timestamp = datetime.datetime.strptime(timestamp_str, TIME_FORMAT).timestamp()
+            msg = re.sub(r'\[.*\]', '', last_line).strip()
+            return (timestamp, msg)
+    except FileNotFoundError:
+        return (0, "")
+    
+def notify(notifType, err=None):
+
+    subject, body = None, None
+    if (notifType == NotificationType.CHANGE):
+        subject = '😱🚨🔔 A change was detected on Dwyerstorage.com!'
+        body = f"""Hello,
+
+I noticed a difference in the amount of call buttons on the dwyerstorage website. There may be a suitable storage spot available!
+Check {URL} now!
+
+Best,
+Adam's Bot"""
+    elif (notifType == NotificationType.NO_CHANGE): 
+        subject = '✅ No changes detected on Dwyerstorage.com'
+        body = f"""Hello,
+
+No aciton required. This is just a health check informing you that no changes were detected on dwyerstorage site recently.
+The site being monitored is {URL}.
+
+Best,
+Adam's Bot"""
+    elif (notifType == NotificationType.ERROR):
+        subject = '❌ Dwyerstorage monitor encountered an error!'
+        body = str(err)
+    else:
+        raise Exception("invalid notifType")
+    print(f"SUBJECT: {subject}\nBODY:\n{body}")
+
+    log(NOTIFY_LOG, notifType.name)
+
+while True:
+    try:     
+        buttons = getButtons(URL)
+
+        oldCallCount = getLastCount()
+        newCallCount = countButtonsContainingString(buttons, "Call")
+        log(COUNT_LOG, newCallCount)
+
+        if (newCallCount < oldCallCount):
+            notify(NotificationType.CHANGE)
+        else:
+            (lastNotify, _) = peekLog(NOTIFY_LOG)
+            if (time.time() - lastNotify > NO_CHANGE_NOTIF_FREQUENCY_SECONDS):
+                notify(NotificationType.NO_CHANGE)
+        raise Exception("bruh")
+    except Exception as e:
+        notify(NotificationType.ERROR, err=str(traceback.format_exc()))
+    finally:
+        time.sleep(CHECKING_FREQUENCY_SECONDS)
