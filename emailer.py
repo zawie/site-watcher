@@ -1,12 +1,18 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #Constants
 SENDER_LOGIN = 'adzawie.bot@gmail.com'
 SENDER_ALIAS = '🤖 Zawie Bot'
-PASSWORD = '' #TODO: fill in
+PASSWORD = os.getenv('EMAIL_PASSWORD')
 SMPT_SERVER = 'smtp.gmail.com'
+
+print(PASSWORD)
 
 def sendMessage(receivers, subject, body):
 

@@ -7,6 +7,9 @@ import datetime
 import re
 from enum import Enum
 import traceback
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from emailer import sendMessage
 
@@ -20,8 +23,8 @@ NOTIFY_LOG = 'notify.log'
 
 CHECKING_FREQUENCY_SECONDS = 5
 NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 15 #24*60*60 #Daily
-DEV_RECIEVERS = ['adzawie@gmail.com']
-CHANGE_RECIEVERS = ['adzawie@gmail.com', 'adamspeedz@gmail.com']
+DEV_RECIEVERS = os.getenv('DEV_RECIEVERS')
+CHANGE_RECIEVERS = os.getenv('CHANGE_RECIEVERS')
 
 URL = 'https://www.dwyerstorage.com/4863-nw-lake-road-camas-wa-98607'
 HEADERS = {
