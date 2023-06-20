@@ -24,7 +24,7 @@ RESERVE_COUNT_LOG = 'reserveCount.log'
 NOTIFY_LOG = 'notify.log'
 
 CHECKING_FREQUENCY_SECONDS = 30*60 
-NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 24*60*60
+NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 2*24*60*60
 
 DEV_RECIEVERS = json.loads(os.getenv('DEV_RECIEVERS'))
 CHANGE_RECIEVERS = json.loads(os.getenv('CHANGE_RECIEVERS'))
@@ -93,7 +93,7 @@ def notify(notifType, err=None):
         subject = '😱🚨🔔 Dwyerstorage.com changed!'
         body = f"""Hello,
 
-I noticed a difference in the amount of call buttons on the dwyerstorage website. There may be a suitable storage spot available!
+I noticed a difference in the amount of call or reserve buttons on the Dwyerstorage website. There may be a suitable storage spot available!
 Check {URL} now!
 
 Best,
@@ -121,11 +121,14 @@ Zawie's Bot"""
 
     log(NOTIFY_LOG, notifType.name)
 
-sendMessage(DEV_RECIEVERS, 
+sendMessage(CHANGE_RECIEVERS, 
     subject="🚀 Dwyerstorage Monitor is Starting", 
     body=f"""Hello,
 
-This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected and a health check every {NO_CHANGE_NOTIF_FREQUENCY_SECONDS} seconds.
+This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected.
+A change is detected when either the number of "Call" or "Reserve" buttons changes at {URL}.
+
+Please make sure this sender is not sent to spam so you get a timely notification! :-)
 
 Best,
 Zawie's Bot"""
@@ -137,13 +140,13 @@ while True:
 
         oldReserveCount = getLastCount(RESERVE_COUNT_LOG)
         newReserveCount = countButtonsContainingString(buttons, "Reserve")
-        log(RESERVE_COUNT_LOG, newCallCount)
+        log(RESERVE_COUNT_LOG, newReserveCount)
 
         oldCallCount = getLastCount(CALL_COUNT_LOG)
         newCallCount = countButtonsContainingString(buttons, "Call")
         log(CALL_COUNT_LOG, newCallCount)
 
-        if (newCallCount < oldCallCount or newReserveCount > oldReserveCount):
+        if (newCallCount != oldCallCount or newReserveCount != oldReserveCount):
             notify(NotificationType.CHANGE)
         else:
             (lastNotify, _) = peekLog(NOTIFY_LOG)
