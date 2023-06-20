@@ -19,7 +19,8 @@ class NotificationType(Enum):
     CHANGE = 2
     NO_CHANGE = 3
 
-COUNT_LOG = 'count.log'
+CALL_COUNT_LOG = 'callCount.log'
+RESERVE_COUNT_LOG = 'reserveCount.log'
 NOTIFY_LOG = 'notify.log'
 
 CHECKING_FREQUENCY_SECONDS = 30*60 
@@ -50,8 +51,8 @@ def countButtonsContainingString(buttons, string):
                     count += 1
     return count
 
-def getLastCount():
-    (_, m) = peekLog(COUNT_LOG)
+def getLastCount(log):
+    (_, m) = peekLog(log)
     if m == '':
         return 4
     else:
@@ -134,11 +135,15 @@ while True:
     try:     
         buttons = getButtons(URL)
 
-        oldCallCount = getLastCount()
-        newCallCount = countButtonsContainingString(buttons, "Call")
-        log(COUNT_LOG, newCallCount)
+        oldReserveCount = getLastCount(RESERVE_COUNT_LOG)
+        newReserveCount = countButtonsContainingString(buttons, "Reserve")
+        log(RESERVE_COUNT_LOG, newCallCount)
 
-        if (newCallCount < oldCallCount):
+        oldCallCount = getLastCount(CALL_COUNT_LOG)
+        newCallCount = countButtonsContainingString(buttons, "Call")
+        log(CALL_COUNT_LOG, newCallCount)
+
+        if (newCallCount < oldCallCount or newReserveCount > oldReserveCount):
             notify(NotificationType.CHANGE)
         else:
             (lastNotify, _) = peekLog(NOTIFY_LOG)
