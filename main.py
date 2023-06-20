@@ -89,7 +89,7 @@ def notify(notifType, err=None):
     subject, body, recievers = None, None, None
     if (notifType == NotificationType.CHANGE):
         recievers = CHANGE_RECIEVERS
-        subject = '😱🚨🔔 A change was detected on Dwyerstorage.com!'
+        subject = '😱🚨🔔 Dwyerstorage.com changed!'
         body = f"""Hello,
 
 I noticed a difference in the amount of call buttons on the dwyerstorage website. There may be a suitable storage spot available!
