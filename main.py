@@ -1,7 +1,6 @@
 import bs4
 import requests
 import os
-import calendar
 import time
 import datetime
 import re
@@ -118,6 +117,8 @@ Adam's Bot"""
     sendMessage(recievers, subject=subject, body=body)
 
     log(NOTIFY_LOG, notifType.name)
+
+sendMessage(DEV_RECIEVERS, subject="🚀 Dwyerstorage Monitor is Starting", body="This email is being sent to inform you that the Dwyerstorage monitor is beginning!")
 
 while True:
     try:     

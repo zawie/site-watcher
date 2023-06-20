@@ -31,4 +31,4 @@ def sendMessage(receivers, subject, body):
 if __name__ == '__main__':
     test_reciever = 'adzawie@gmail.com'
     print(f"Sending test email to {test_reciever}")
-    sendMessage([test_reciever], 'Test Message', '🚀🚀🚀')
+    sendMessage([test_reciever], 'Test Message', 'This is a test message! 🚀🚀🚀')
