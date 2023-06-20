@@ -120,7 +120,15 @@ Adam's Bot"""
 
     log(NOTIFY_LOG, notifType.name)
 
-sendMessage(DEV_RECIEVERS, subject="🚀 Dwyerstorage Monitor is Starting", body="This email is being sent to inform you that the Dwyerstorage monitor is beginning!")
+sendMessage(DEV_RECIEVERS, 
+    subject="🚀 Dwyerstorage Monitor is Starting", 
+    body=f"""Hello,
+
+This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected and a health check every {NO_CHANGE_NOTIF_FREQUENCY_SECONDS} seconds.
+
+Best,
+Adam's Bot"""
+)
 
 while True:
     try:     
