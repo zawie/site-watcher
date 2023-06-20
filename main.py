@@ -21,6 +21,8 @@ class NotificationType(Enum):
 
 CALL_COUNT_LOG = 'callCount.log'
 RESERVE_COUNT_LOG = 'reserveCount.log'
+MOVE_IN_COUNT_LOG = 'moveInCount.log'
+
 NOTIFY_LOG = 'notify.log'
 
 CHECKING_FREQUENCY_SECONDS = 30*60 
@@ -126,7 +128,7 @@ sendMessage(CHANGE_RECIEVERS,
     body=f"""Hello,
 
 This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected.
-A change is detected when either the number of "Call" or "Reserve" buttons changes at {URL}.
+A change is detected when either the number of "Call", "Reserve", or "Move In" buttons changes at {URL}.
 
 Please make sure this sender is not sent to spam so you get a timely notification! :-)
 
@@ -142,11 +144,16 @@ while True:
         newReserveCount = countButtonsContainingString(buttons, "Reserve")
         log(RESERVE_COUNT_LOG, newReserveCount)
 
+
+        oldMoveInCount = getLastCount(MOVE_IN_COUNT_LOG)
+        newMoveInCount = countButtonsContainingString(buttons, "Move In")
+        log(MOVE_IN_COUNT_LOG, newMoveInCount)
+
         oldCallCount = getLastCount(CALL_COUNT_LOG)
         newCallCount = countButtonsContainingString(buttons, "Call")
         log(CALL_COUNT_LOG, newCallCount)
 
-        if (newCallCount != oldCallCount or newReserveCount != oldReserveCount):
+        if (newCallCount != oldCallCount or newReserveCount != oldReserveCount or newMoveInCount != oldMoveInCount):
             notify(NotificationType.CHANGE)
         else:
             (lastNotify, _) = peekLog(NOTIFY_LOG)
