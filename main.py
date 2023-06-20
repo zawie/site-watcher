@@ -96,7 +96,7 @@ I noticed a difference in the amount of call buttons on the dwyerstorage website
 Check {URL} now!
 
 Best,
-Adam's Bot"""
+Zawie's Bot"""
     elif (notifType == NotificationType.NO_CHANGE): 
         recievers = DEV_RECIEVERS
         subject = '✅ No changes detected on Dwyerstorage.com'
@@ -106,7 +106,7 @@ No aciton required. This is just a health check informing you that no changes we
 The site being monitored is {URL}.
 
 Best,
-Adam's Bot"""
+Zawie's Bot"""
     elif (notifType == NotificationType.ERROR):
         recievers = DEV_RECIEVERS
         subject = '❌ Dwyerstorage monitor encountered an error!'
@@ -127,7 +127,7 @@ sendMessage(DEV_RECIEVERS,
 This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected and a health check every {NO_CHANGE_NOTIF_FREQUENCY_SECONDS} seconds.
 
 Best,
-Adam's Bot"""
+Zawie's Bot"""
 )
 
 while True:
