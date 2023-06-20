@@ -95,7 +95,7 @@ def notify(notifType, err=None):
         subject = '😱🚨🔔 Dwyerstorage.com changed!'
         body = f"""Hello,
 
-I noticed a difference in the amount of call or reserve buttons on the Dwyerstorage website. There may be a suitable storage spot available!
+I noticed a difference in the amount of "Call", "Reserve", or "Move In" buttons on the Dwyerstorage website. This may mean a suitable storage spot is available!
 Check {URL} now!
 
 Best,
