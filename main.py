@@ -4,8 +4,10 @@ import os
 import time
 import datetime
 import re
-from enum import Enum
+import json
 import traceback
+
+from enum import Enum
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,8 +25,8 @@ NOTIFY_LOG = 'notify.log'
 CHECKING_FREQUENCY_SECONDS = 30*60 
 NO_CHANGE_NOTIF_FREQUENCY_SECONDS = 24*60*60
 
-DEV_RECIEVERS = os.getenv('DEV_RECIEVERS')
-CHANGE_RECIEVERS = os.getenv('CHANGE_RECIEVERS')
+DEV_RECIEVERS = json.loads(os.getenv('DEV_RECIEVERS'))
+CHANGE_RECIEVERS = json.loads(os.getenv('CHANGE_RECIEVERS'))
 
 URL = 'https://www.dwyerstorage.com/4863-nw-lake-road-camas-wa-98607'
 HEADERS = {
