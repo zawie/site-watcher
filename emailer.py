@@ -12,8 +12,6 @@ SENDER_ALIAS = '🤖 Zawie Bot'
 PASSWORD = os.getenv('EMAIL_PASSWORD')
 SMPT_SERVER = 'smtp.gmail.com'
 
-print(PASSWORD)
-
 def sendMessage(receivers, subject, body):
 
     with smtplib.SMTP_SSL(SMPT_SERVER, 465) as smtp_server:
