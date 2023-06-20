@@ -1,7 +1,7 @@
 # Perform a quick update on your instance:
 sudo yum update -y
 sudo yum install git -y
-sudp yum install python3-pip -y
+sudo yum install python3-pip -y
 
 pip3 install python-dotenv
 pip3 install bs4
