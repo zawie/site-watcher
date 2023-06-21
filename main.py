@@ -15,6 +15,7 @@ load_dotenv()
 from emailer import sendMessage
 
 class NotificationType(Enum):
+    START = 0
     ERROR = 1
     CHANGE = 2
     NO_CHANGE = 3
@@ -114,6 +115,18 @@ Zawie's Bot"""
         recievers = DEV_RECIEVERS
         subject = '❌ Dwyerstorage monitor encountered an error!'
         body = str(err)
+    elif (notifType == NotificationType.START):
+        recievers = DEV_RECIEVERS
+        subject="🚀 Dwyerstorage Monitor is Starting", 
+        body=f"""Hello,
+
+This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected.
+A change is detected when either the number of "Call", "Reserve", or "Move In" buttons changes at {URL}.
+
+Please make sure this sender is not sent to spam so you get a timely notification! :-)
+
+Best,
+Zawie's Bot"""
     else:
         raise Exception("invalid notifType")
     
@@ -123,18 +136,7 @@ Zawie's Bot"""
 
     log(NOTIFY_LOG, notifType.name)
 
-sendMessage(CHANGE_RECIEVERS, 
-    subject="🚀 Dwyerstorage Monitor is Starting", 
-    body=f"""Hello,
-
-This email is to notify you that Dwyerstorage monitor is starting! You should recieve an email when a change is detected.
-A change is detected when either the number of "Call", "Reserve", or "Move In" buttons changes at {URL}.
-
-Please make sure this sender is not sent to spam so you get a timely notification! :-)
-
-Best,
-Zawie's Bot"""
-)
+notify(NotificationType.START)
 
 while True:
     try:     
